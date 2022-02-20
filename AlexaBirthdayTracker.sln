@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlexaBirthdayTracker", "AlexaBirthdayTracker\AlexaBirthdayTracker.csproj", "{914531D2-041E-4D9B-914C-28ED284107B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{914531D2-041E-4D9B-914C-28ED284107B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{914531D2-041E-4D9B-914C-28ED284107B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{914531D2-041E-4D9B-914C-28ED284107B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{914531D2-041E-4D9B-914C-28ED284107B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
