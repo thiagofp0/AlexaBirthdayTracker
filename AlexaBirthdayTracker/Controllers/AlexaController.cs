@@ -1,6 +1,10 @@
+using System;
 using Alexa.NET.Request;
 using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
+using AlexaBirthdayTracker.Interfaces;
+using AlexaBirthdayTracker.Models;
+using AlexaBirthdayTracker.Providers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlexaBirthdayTracker.Controllers
@@ -9,6 +13,13 @@ namespace AlexaBirthdayTracker.Controllers
     [Route("[controller]")]
     public class AlexaController : Controller
     {
+        private IBirthdayDataProvider _birthdayDataProvider;
+
+        public AlexaController(IBirthdayDataProvider bdp)
+        {
+            _birthdayDataProvider = bdp;
+        }
+        
         [HttpPost, Route("/process")]
         public SkillResponse Process(SkillRequest input)
         {
@@ -31,7 +42,15 @@ namespace AlexaBirthdayTracker.Controllers
                     switch (intentRequest.Intent.Name)
                     {
                         case "next_birthday_intent":
-                            output.Response.OutputSpeech = new PlainTextOutputSpeech("The next birthday is of John on 24nd February 2022");
+                            Birthday birthday = _birthdayDataProvider.GetNextBirthday();
+                            if (birthday != null)
+                            {
+                                output.Response.OutputSpeech = new PlainTextOutputSpeech(String.Format("The next birthday is of {0} on {1}", birthday.Name, birthday.Date.ToString("D")));   
+                            }
+                            else
+                            {
+                                output.Response.OutputSpeech = new PlainTextOutputSpeech("Sorry! No Birthdays found!");
+                            }
                             output.Response.ShouldEndSession = false;
                             break;
                         case "AMAZON.FallbackIntent":
