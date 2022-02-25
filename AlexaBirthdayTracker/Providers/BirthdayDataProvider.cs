@@ -49,7 +49,7 @@ namespace AlexaBirthdayTracker.Providers
 
         public Birthday GetBirthday(string name)
         {
-            Birthday named = birthdays.Find(b => b.Name.Contains(name) || name.Contains(b.Name));
+            Birthday named = birthdays.Find(b => b.Name.ToLower().Contains(name.ToLower()) || name.ToLower().Contains(b.Name.ToLower()));
             if (named != null)
             {
                 if (named.Date < DateTime.Today)
