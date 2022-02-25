@@ -30,11 +30,11 @@ namespace AlexaBirthdayTracker.Controllers
             switch (input.Request.Type)
             {
                 case "LaunchRequest":
-                    output.Response.OutputSpeech = new PlainTextOutputSpeech("Hello! Welcome to birthday tracker! May i help you tracking birthdays? 1");
+                    output.Response.OutputSpeech = new PlainTextOutputSpeech("Hello! Welcome to birthday tracker! May i help you tracking birthdays?");
                     output.Response.ShouldEndSession = false;
                     break;
                 case "SessionEndedRequest":
-                    output.Response.OutputSpeech = new PlainTextOutputSpeech("Hello! Welcome to birthday tracker! May i help you tracking birthdays? 2");
+                    output.Response.OutputSpeech = new PlainTextOutputSpeech("Hello! Welcome to birthday tracker! May i help you tracking birthdays?");
                     output.Response.ShouldEndSession = false;
                     break;
                 case "IntentRequest":
@@ -53,6 +53,23 @@ namespace AlexaBirthdayTracker.Controllers
                             }
                             output.Response.ShouldEndSession = false;
                             break;
+                        case "named_birthday_intent":
+                            
+                            string name = intentRequest.Intent.Slots["name"].SlotValue.Value;
+                            
+                            Birthday named = _birthdayDataProvider.GetBirthday(name);
+                            
+                            if (named != null)
+                            {
+                                output.Response.OutputSpeech = new PlainTextOutputSpeech(String.Format("The Birthday of {0} is on: {1}", named.Name, named.Date.ToString("D")));   
+                            }
+                            else
+                            {
+                                output.Response.OutputSpeech = new PlainTextOutputSpeech("Sorry! No Birthdays found!");
+                            }
+                            output.Response.ShouldEndSession = false;
+                            break;
+                            
                         case "AMAZON.FallbackIntent":
                             output.Response.OutputSpeech = new PlainTextOutputSpeech("Sorry. Can you repeat that?");
                             output.Response.ShouldEndSession = false;

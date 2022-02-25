@@ -6,5 +6,6 @@ namespace AlexaBirthdayTracker.Interfaces
     {
         public void Init();
         public Birthday GetNextBirthday();
+        public Birthday GetBirthday(string name);
     }
 }

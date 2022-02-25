@@ -47,6 +47,19 @@ namespace AlexaBirthdayTracker.Providers
             }
         }
 
+        public Birthday GetBirthday(string name)
+        {
+            Birthday named = birthdays.Find(b => b.Name.Contains(name) || name.Contains(b.Name));
+            if (named != null)
+            {
+                if (named.Date < DateTime.Today)
+                {
+                    named.Date = new DateTime(DateTime.Today.Year + 1, named.Date.Month, named.Date.Day);
+                }
+            }
+
+            return named;
+        }
         public Birthday GetNextBirthday()
         {
             List<Birthday> birthdaysSorted = birthdays.OrderBy(b => b.DayofYear).ToList();
