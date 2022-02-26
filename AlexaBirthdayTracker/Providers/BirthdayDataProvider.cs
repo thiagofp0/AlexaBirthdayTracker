@@ -24,32 +24,36 @@ namespace AlexaBirthdayTracker.Providers
                 {
                     Name = "Thiago",
                     Date = new DateTime(2022, 11, 29),
-                    DayofYear = new DateTime(2022, 11, 29).DayOfYear
+                    DayofYear = new DateTime(2022, 11, 29).DayOfYear,
+                    
                 });
                 birthdays.Add(new Birthday()
                 {
                     Name = "Renata",
                     Date = new DateTime(2023, 1, 2),
-                    DayofYear = new DateTime(2023, 1, 2).DayOfYear
+                    DayofYear = new DateTime(2023, 1, 2).DayOfYear,
+                    
                 });
                 birthdays.Add(new Birthday()
                 {
                     Name = "Genilza",
                     Date = new DateTime(2022, 2, 2),
-                    DayofYear = new DateTime(2022, 2, 2).DayOfYear
+                    DayofYear = new DateTime(2022, 2, 2).DayOfYear,
+                    
                 });
                 birthdays.Add(new Birthday()
                 {
                     Name = "Bruno",
                     Date = new DateTime(2022, 4, 11),
-                    DayofYear = new DateTime(2022, 4, 11).DayOfYear
+                    DayofYear = new DateTime(2022, 4, 11).DayOfYear,
+                    
                 });
             }
         }
 
-        public Birthday GetBirthday(string name)
+        public Birthday GetBirthday(string name, string userId)
         {
-            Birthday named = birthdays.Find(b => b.Name.ToLower().Contains(name.ToLower()) || name.ToLower().Contains(b.Name.ToLower()));
+            Birthday named = birthdays.Find(b => b.UserId == userId &&(b.Name.ToLower().Contains(name.ToLower()) || name.ToLower().Contains(b.Name.ToLower())));
             if (named != null)
             {
                 if (named.Date < DateTime.Today)
@@ -60,9 +64,24 @@ namespace AlexaBirthdayTracker.Providers
 
             return named;
         }
-        public Birthday GetNextBirthday()
+
+        public bool AddBirthday(Birthday birthday)
         {
-            List<Birthday> birthdaysSorted = birthdays.OrderBy(b => b.DayofYear).ToList();
+            try
+            {
+                birthdays.Add(birthday);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        public Birthday GetNextBirthday(string userId)
+        {
+            List<Birthday> birthdaysSorted = birthdays.Where(b => b.UserId == userId).OrderBy(b => b.DayofYear).ToList();
             int currentDayOfYear = DateTime.Today.DayOfYear;
             Birthday next = birthdaysSorted.Find(b => b.DayofYear >= currentDayOfYear)!;
             if (next == null && birthdaysSorted.Count > 0)

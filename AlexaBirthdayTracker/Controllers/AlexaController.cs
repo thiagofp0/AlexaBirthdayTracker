@@ -4,7 +4,6 @@ using Alexa.NET.Request.Type;
 using Alexa.NET.Response;
 using AlexaBirthdayTracker.Interfaces;
 using AlexaBirthdayTracker.Models;
-using AlexaBirthdayTracker.Providers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlexaBirthdayTracker.Controllers
@@ -42,7 +41,8 @@ namespace AlexaBirthdayTracker.Controllers
                     switch (intentRequest.Intent.Name)
                     {
                         case "next_birthday_intent":
-                            Birthday birthday = _birthdayDataProvider.GetNextBirthday();
+                            string userId = input.Session.User.UserId;
+                            Birthday birthday = _birthdayDataProvider.GetNextBirthday(userId);
                             if (birthday != null)
                             {
                                 output.Response.OutputSpeech = new PlainTextOutputSpeech(String.Format("The next birthday is of {0} on {1}", birthday.Name, birthday.Date.ToString("D")));   
@@ -55,9 +55,10 @@ namespace AlexaBirthdayTracker.Controllers
                             break;
                         case "named_birthday_intent":
                             
-                            string name = intentRequest.Intent.Slots["name"].SlotValue.Value;
+                            string name = intentRequest.Intent.Slots["name"].Value;
+                            userId = input.Session.User.UserId;
                             
-                            Birthday named = _birthdayDataProvider.GetBirthday(name);
+                            Birthday named = _birthdayDataProvider.GetBirthday(name, userId);
                             
                             if (named != null)
                             {
@@ -69,9 +70,43 @@ namespace AlexaBirthdayTracker.Controllers
                             }
                             output.Response.ShouldEndSession = false;
                             break;
+                        case "add_birthday_intent":
+
+                            if (intentRequest.Intent.ConfirmationStatus == "Denied")
+                            {
+                                output.Response.OutputSpeech = new PlainTextOutputSpeech("Ok. Operation Cancelled. Please try again");
+                            }
+                            else
+                            {
+                                Birthday newBirthday = new Birthday();
+                                newBirthday.Name = intentRequest.Intent.Slots["name"].Value;
+                                newBirthday.Date = DateTime.Parse(intentRequest.Intent.Slots["birthday"].Value);
+                                newBirthday.DayofYear = newBirthday.Date.DayOfYear;
+                                newBirthday.UserId = input.Session.User.UserId;
+                                bool success = _birthdayDataProvider.AddBirthday(newBirthday);
+
+                                if (success)
+                                {
+                                    output.Response.OutputSpeech = new PlainTextOutputSpeech("Great! Birthday added!");
+                                }
+                                else
+                                {
+                                    output.Response.OutputSpeech = new PlainTextOutputSpeech("Sorry. Could not add that birthday. Please try again.");
+                                }    
+                            }
                             
+                            output.Response.ShouldEndSession = false;
+                            break;
+                        case "AMAZON.StopIntent":
+                            output.Response.OutputSpeech = new PlainTextOutputSpeech("Ok! Bye!");
+                            output.Response.ShouldEndSession = true;
+                            break;
                         case "AMAZON.FallbackIntent":
                             output.Response.OutputSpeech = new PlainTextOutputSpeech("Sorry. Can you repeat that?");
+                            output.Response.ShouldEndSession = false;
+                            break;
+                        default:
+                            output.Response.OutputSpeech = new PlainTextOutputSpeech("Sorry. I'm still learning that. Please try again later.");
                             output.Response.ShouldEndSession = false;
                             break;
                     }

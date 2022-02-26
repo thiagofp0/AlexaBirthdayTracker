@@ -7,5 +7,7 @@ namespace AlexaBirthdayTracker.Models
         public string Name { get; set; }
         public DateTime Date { get; set; }
         public int DayofYear { get; set; }
+        
+        public string UserId { get; set; }
     }
 }
